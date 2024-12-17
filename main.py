@@ -26,10 +26,10 @@ y = data['price']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Перетворення в тензори для PyTorch
-X_train_tensor = torch.tensor(X_train.values, dtype=torch.float32).cuda()
-X_test_tensor = torch.tensor(X_test.values, dtype=torch.float32).cuda()
-y_train_tensor = torch.tensor(y_train.values, dtype=torch.float32).view(-1, 1).cuda()
-y_test_tensor = torch.tensor(y_test.values, dtype=torch.float32).view(-1, 1).cuda()
+X_train_tensor = torch.tensor(X_train.values, dtype=torch.float32)  # Без використання .cuda()
+X_test_tensor = torch.tensor(X_test.values, dtype=torch.float32)  # Без використання .cuda()
+y_train_tensor = torch.tensor(y_train.values, dtype=torch.float32).view(-1, 1)  # Без використання .cuda()
+y_test_tensor = torch.tensor(y_test.values, dtype=torch.float32).view(-1, 1)  # Без використання .cuda()
 
 # Визначення моделі для прогнозування ціни
 class HousePricePredictor(nn.Module):
@@ -47,7 +47,7 @@ class HousePricePredictor(nn.Module):
         return self.fc(x)
 
 # Ініціалізація моделі для ціни
-price_model = HousePricePredictor(input_dim=X_train.shape[1]).cuda()
+price_model = HousePricePredictor(input_dim=X_train.shape[1])  # Без використання .cuda()
 criterion = nn.MSELoss()
 optimizer = optim.Adam(price_model.parameters(), lr=0.001)
 
@@ -91,7 +91,7 @@ def get_recommendations(input_data):
 
     # Масштабування введених даних
     scaled_input = scaler.transform([[desired_sqft, max_budget, 0, 0]])[0]  # Масштабуємо вхідні дані
-    user_tensor = torch.tensor([[scaled_input[0], scaled_input[1], scaled_input[2]]], dtype=torch.float32).cuda()
+    user_tensor = torch.tensor([[scaled_input[0], scaled_input[1], scaled_input[2]]], dtype=torch.float32)  # Без .cuda()
 
     price_model.eval()
     with torch.no_grad():
@@ -137,12 +137,6 @@ def get_recommendations(input_data):
     # Повертаємо дані у форматі, який можна серіалізувати в JSON
     return recommended[['id', 'price_original', 'annual_rental_income', 'recommended_rental_income', 'roi_years',
                         'projected_price_growth']].to_dict('records')
-
-
-
-
-
-
 
 # Рендер сторінки для введення даних
 @app.route('/')

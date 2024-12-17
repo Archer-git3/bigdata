@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Recommendation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: inline-block;
+            width: 200px;
+            margin-bottom: 10px;
+        }
+        input {
+            padding: 5px;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Enter Real Estate Preferences</h1>
+<form id="inputForm">
+    <label for="desired_sqft">Desired Square Feet:</label>
+    <input type="number" id="desired_sqft" name="desired_sqft" value="2000"  style="color: gray; background-color: #f5f5f5;"><br>
+
+    <label for="max_budget">Max Budget:</label>
+    <input type="number" id="max_budget" name="max_budget" value="500000"  style="color: gray; background-color: #f5f5f5;"><br>
+
+    <label for="desired_rental_income">Desired Rental Income:</label>
+    <input type="number" id="desired_rental_income" name="desired_rental_income" value="2500" style="color: gray; background-color: #f5f5f5;"><br>
+
+    <button type="button" onclick="submitData()">Get Recommendations</button>
+</form>
+
+
+    <h2>Results:</h2>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Original Price</th>
+                <th>Annual Rental Income</th>
+                <th>Recommended Rental Income</th>
+                <th>ROI (Years)</th>
+                <th>Projected Price Growth (%)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        function submitData() {
+            const inputData = {
+                desired_sqft: document.getElementById('desired_sqft').value,
+                max_budget: document.getElementById('max_budget').value,
+                desired_rental_income: document.getElementById('desired_rental_income').value
+            };
+
+            fetch('/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(inputData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector("#resultTable tbody");
+                tableBody.innerHTML = ""; // Очищення таблиці перед додаванням результатів
+
+                data.forEach(item => {
+                    const row = `
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.price_original}</td>
+                            <td>${item.annual_rental_income}</td>
+                            <td>${item.recommended_rental_income}</td>
+                            <td>${item.roi_years}</td>
+                            <td>${item.projected_price_growth}</td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const tableBody = document.querySelector("#resultTable tbody");
+                tableBody.innerHTML = `<tr><td colspan="6">Error: ${error}</td></tr>`;
+            });
+        }
+    </script>
+</body>
+</html>

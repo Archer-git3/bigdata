@@ -9,7 +9,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 # Загружаем датасет
-file_path = 'kc_house_data.csv'
+
+BUCKET_NAME = "databigdataproject"
+FILE_KEY = "kc_house_data.csv(1)/kc_house_data.csv"
+AWS_REGION = "eu-north-1"
 
 def load_csv_from_s3(bucket_name, file_key, region):
 

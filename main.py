@@ -12,15 +12,8 @@ from sklearn.preprocessing import StandardScaler
 file_path = 'kc_house_data.csv'
 
 def load_csv_from_s3(bucket_name, file_key, region):
-    """
-    Load a CSV file from Amazon S3 into a Pandas DataFrame.
-    
-    :param bucket_name: Name of the S3 bucket.
-    :param file_key: Key of the file in the S3 bucket.
-    :param region: AWS region where the S3 bucket is located.
-    :return: Pandas DataFrame containing the data.
-    """
-    try:
+
+   
         # Create an S3 client
         s3 = boto3.client('s3', region_name=region)
         
@@ -34,17 +27,12 @@ def load_csv_from_s3(bucket_name, file_key, region):
         df = pd.read_csv(StringIO(csv_data))
         return df
     
-    except Exception as e:
-        print(f"Error loading file from S3: {e}")
-        return None
+   
 
 
+    
+data = load_csv_from_s3(BUCKET_NAME, FILE_KEY, AWS_REGION)
 
-try :    
-    data = load_csv_from_s3(BUCKET_NAME, FILE_KEY, AWS_REGION)
-except : 
-    print("failed_conection")
-    data = pd.read_csv(file_path)
 
 
 # Обробка пропущених значень
